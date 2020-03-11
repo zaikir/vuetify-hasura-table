@@ -4,6 +4,7 @@ import gql from 'graphql-tag';
 import { VDataTable } from 'vuetify/lib/components';
 import {
   buildItemsQuery, getQueryVariables, getReferencePath, getFieldValue,
+  wrapGraphqlError,
 } from './utils';
 import { DeleteRowButton } from './components';
 
@@ -43,9 +44,10 @@ export default {
       result({ data }) {
         this.totalItemsLength = data[`${this.source}_aggregate`].aggregate.count;
       },
-      // error(error) {
-      //   this.$emit('error', wrapGraphqlError(error));
-      // },
+      error(error) {
+        const errorText = wrapGraphqlError(error);
+        this.emitError(errorText, error);
+      },
       variables() {
         return getQueryVariables(this.source, this.mappedFields, this.options, {
           sortMapper: this.sortMapper,
@@ -75,6 +77,15 @@ export default {
 
         return field;
       });
+    },
+  },
+  methods: {
+    emitError(errorText, error) {
+      if ((Vue.$hasuraTable || {}).errorHandler) {
+        Vue.$hasuraTable.errorHandler(errorText, error);
+      }
+
+      this.$emit('error', errorText);
     },
   },
   render(h) {
@@ -134,6 +145,10 @@ export default {
               if (this.deleteParams.onDeleted) {
                 this.deleteParams.onDeleted({ cache, item });
               }
+            },
+            error(error) {
+              const errorText = wrapGraphqlError(error);
+              this.emitError(errorText, error);
             },
             variables: {
               id: item[this.deleteParams.idKey || 'id'],
