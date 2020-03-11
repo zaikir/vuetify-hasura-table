@@ -41,7 +41,7 @@ export default {
       //   this.$emit('error', wrapGraphqlError(error));
       // },
       variables() {
-        return getQueryVariables(this.source, this.options, {
+        return getQueryVariables(this.source, this.mappedFields, this.options, {
           sortMapper: this.sortMapper,
         });
       },
@@ -79,7 +79,9 @@ export default {
     };
 
     const items = this.items.map((item) => Object.assign(
-      {}, ...this.mappedFields.map((field) => getFieldValue(field, item)),
+      {}, ...this.mappedFields.map((field) => ({
+        [field.value]: getFieldValue(field, item),
+      })),
     ));
 
     const totalProps = {
