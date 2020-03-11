@@ -42,7 +42,9 @@ export default {
         return data[this.source];
       },
       result({ data }) {
-        this.totalItemsLength = data[`${this.source}_aggregate`].aggregate.count;
+        if (data[data[`${this.source}_aggregate`]]) {
+          this.totalItemsLength = data[`${this.source}_aggregate`].aggregate.count;
+        }
       },
       error(error) {
         const errorText = wrapGraphqlError(error);
@@ -95,7 +97,7 @@ export default {
       ...params,
     };
 
-    const items = this.items.map((item) => Object.assign(
+    const items = (this.items || []).map((item) => Object.assign(
       {},
       ...this.defaultSelections.split(' ').map((key) => ({ [key]: item[key] })),
       ...this.mappedFields.map((field) => ({
