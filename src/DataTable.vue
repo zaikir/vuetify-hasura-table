@@ -27,7 +27,7 @@ export default {
   apollo: {
     items: {
       query() {
-        return buildItemsQuery(this.source, this.fields, this.defaultSelections);
+        return gql(buildItemsQuery(this.source, this.fields, this.defaultSelections));
       },
       update(data) {
         return data[this.source];
@@ -68,11 +68,11 @@ export default {
       items: this.items,
       serverItemsLength: this.totalItems,
       options: this.options,
+      loading: this.$apollo.loading,
     };
 
     return h(options.table, {
       props: totalProps,
-      class: this.$children,
       scopedSlots: this.$scopedSlots,
       on: {
         ...this.$listeners,
