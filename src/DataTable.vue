@@ -58,6 +58,7 @@ export default {
       },
       result({ data }) {
         if (data[`${this.source}_aggregate`]) {
+          this.initialLoading = false;
           this.totalItemsLength = data[`${this.source}_aggregate`].aggregate.count;
         }
       },
@@ -89,6 +90,7 @@ export default {
       totalItemsLength: 0,
       items: [],
       searchValue: null,
+      initialLoading: true,
     };
   },
   computed: {
@@ -147,9 +149,13 @@ export default {
       })),
     ));
 
+    const skeletonLoading = this.initialLoading;
+
     const totalFields = this.noDelete ? this.fields : [
       ...this.fields,
-      { value: '$delete', sortable: false },
+      {
+        value: '$delete', sortable: false, width: 1, ...skeletonLoading && { width: undefined, skeleton: { type: 'text', maxWidth: 24, maxHeight: 24 } },
+      },
     ];
 
     const totalProps = {
@@ -162,6 +168,7 @@ export default {
       serverItemsLength: this.totalItemsLength,
       options: this.options,
       loading: this.$apollo.loading,
+      skeletonLoading,
     };
 
     const renderDeleteRowButton = (item, deleteRowFunc) => h(DeleteRowButton, {
