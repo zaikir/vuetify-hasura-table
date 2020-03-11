@@ -85,7 +85,9 @@ export default {
     };
 
     const items = this.items.map((item) => Object.assign(
-      {}, ...this.mappedFields.map((field) => ({
+      {},
+      ...this.defaultSelections.split(' ').map((key) => ({ [key]: item[key] })),
+      ...this.mappedFields.map((field) => ({
         [field.value]: getFieldValue(field, item),
       })),
     ));
@@ -126,10 +128,12 @@ export default {
               ? this.deleteParams.customMutation(mutation)
               : mutation),
             refetchQueries: () => {
-              this.$apollo.queries.items.refresh();
+              this.$apollo.queries.items.refetch();
             },
             update: (cache) => {
-              // clearCache(cache, source, $apollo);
+              if (this.deleteParams.onDeleted) {
+                this.deleteParams.onDeleted({ cache, item });
+              }
             },
             variables: {
               id: item[this.deleteParams.idKey || 'id'],
@@ -139,7 +143,7 @@ export default {
 
         return this.$scopedSlots['item.$delete']
           ? this.$scopedSlots['item.$delete']({ item, deleteRowFunc })
-          : renderDeleteRowButton(item);
+          : renderDeleteRowButton(item, deleteRowFunc);
       },
       ...this.$scopedSlots,
     };

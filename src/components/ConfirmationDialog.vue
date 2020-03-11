@@ -12,7 +12,7 @@
           {{ translate('confirmationTitle', 'Warning') }}
         </v-toolbar-title>
       </v-toolbar>
-      <v-card-text v-if="text" class="pt-4">
+      <v-card-text class="pt-4">
         <span class="body-1 font-weight-black">
           {{ translate('confirmationText', 'Are you sure?') }}
         </span>
