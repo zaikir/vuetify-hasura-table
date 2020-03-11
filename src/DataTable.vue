@@ -37,11 +37,10 @@ export default {
       default: () => ({}),
     },
     search: String,
-    searchFilter: {
-      type: Function,
-      validator(value) {
-        return !this.search || value;
-      },
+    searchFilter: Function,
+    searchDelay: {
+      type: Number,
+      default: 200,
     },
     noRemovedFilter: Boolean,
     removedFilter: {
@@ -73,8 +72,8 @@ export default {
         };
         return getQueryVariables(this.source, this.mappedFields, this.options,
           {
-            filters: this.searchFilter
-              ? { ...filters, ...this.searchFilter(this.search, filters) }
+            filters: this.searchFilter && this.searchValue
+              ? { ...filters, ...this.searchFilter(this.searchValue, filters) }
               : filters,
           },
           { sortMapper: this.sortMapper });
@@ -89,6 +88,7 @@ export default {
       options: null,
       totalItemsLength: 0,
       items: [],
+      searchValue: null,
     };
   },
   computed: {
@@ -115,6 +115,21 @@ export default {
       }
 
       this.$emit('error', errorText);
+    },
+  },
+  watch: {
+    search: {
+      handler(val) {
+        if (this.searchTimeout) {
+          clearTimeout(this.searchTimeout);
+          this.searchTimeout = null;
+        }
+
+        this.searchTimeout = setTimeout(
+          () => { this.searchValue = val; }, this.searchDelay,
+        );
+      },
+      immediate: true,
     },
   },
   render(h) {
