@@ -1,6 +1,6 @@
 {
   "name": "vuetify-hasura-table",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "",
   "main": "src/index.js",
   "scripts": {
@@ -40,5 +40,7 @@
     "vue": "^2.6.11",
     "vue-template-compiler": "^2.6.11"
   },
-  "dependencies": {}
+  "dependencies": {
+    "graphql-tag": "^2.10.3"
+  }
 }
