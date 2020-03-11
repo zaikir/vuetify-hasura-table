@@ -5,6 +5,7 @@ import { VDataTable } from 'vuetify/lib/components';
 import {
   buildItemsQuery, getQueryVariables, getReferencePath, getFieldValue,
 } from './utils';
+import { DeleteRowButton } from './components';
 
 export default {
   name: 'VuetifyHasuraTable',
@@ -25,6 +26,11 @@ export default {
       type: Function,
       default: (key, value) => (value ? 'desc' : 'asc'),
     },
+    noDelete: Boolean,
+    deleteParams: {
+      type: Object,
+      default: () => ({}),
+    },
   },
   apollo: {
     items: {
@@ -35,7 +41,7 @@ export default {
         return data[this.source];
       },
       result({ data }) {
-        this.totalItems = data[`${this.source}_aggregate`].aggregate.count;
+        this.totalItemsLength = data[`${this.source}_aggregate`].aggregate.count;
       },
       // error(error) {
       //   this.$emit('error', wrapGraphqlError(error));
@@ -50,7 +56,7 @@ export default {
   data() {
     return {
       options: { page: 1 },
-      totalItems: 0,
+      totalItemsLength: 0,
       items: [],
     };
   },
@@ -84,21 +90,63 @@ export default {
       })),
     ));
 
+    const totalFields = this.noDelete ? this.fields : [
+      ...this.fields,
+      { value: '$delete', sortable: false },
+    ];
+
     const totalProps = {
       ...this.$props,
       ...this.$attrs,
       ...options.table === VDataTable
-        ? { headers: this.fields }
-        : { fields: this.fields },
+        ? { headers: totalFields }
+        : { fields: totalFields },
       items,
-      serverItemsLength: this.totalItems,
+      serverItemsLength: this.totalItemsLength,
       options: this.options,
       loading: this.$apollo.loading,
     };
 
+    const renderDeleteRowButton = (item, deleteRowFunc) => h(DeleteRowButton, {
+      props: { icon: true },
+      on: {
+        delete: deleteRowFunc,
+      },
+    });
+
+    const totalScopedSlots = {
+      'item.$delete': ({ item }) => {
+        const deleteRowFunc = () => {
+          const mutation = `mutation ($id: ${this.deleteParams.idType || 'uuid!'}) {
+            update_${this.source} (where: {id: {_eq: $id } }, _set: { isRemoved: true }) { affected_rows }
+          }`;
+
+          this.$apollo.mutate({
+            mutation: gql(this.deleteParams.customMutation
+              ? this.deleteParams.customMutation(mutation)
+              : mutation),
+            refetchQueries: () => {
+              this.$apollo.queries.items.refresh();
+            },
+            update: (cache) => {
+              // clearCache(cache, source, $apollo);
+            },
+            variables: {
+              id: item[this.deleteParams.idKey || 'id'],
+            },
+          });
+        };
+
+        return this.$scopedSlots['item.$delete']
+          ? this.$scopedSlots['item.$delete']({ item, deleteRowFunc })
+          : renderDeleteRowButton(item);
+      },
+      ...this.$scopedSlots,
+    };
+
     return h(options.table, {
       props: totalProps,
-      scopedSlots: this.$scopedSlots,
+      scopedSlots: totalScopedSlots,
       on: {
         ...this.$listeners,
         'update:options': (val) => { this.options = val; },

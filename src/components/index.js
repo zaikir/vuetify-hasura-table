@@ -1,1 +1,2 @@
-export { default as ReferenceCell } from './ReferenceCell.vue';
+export { default as DeleteRowButton } from './DeleteRowButton.vue';
+export { default as ConfirmationDialog } from './ConfirmationDialog.vue';
