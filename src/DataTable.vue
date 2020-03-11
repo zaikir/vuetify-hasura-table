@@ -36,6 +36,13 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    search: String,
+    searchFilter: {
+      type: Function,
+      validator(value) {
+        return !this.search || value;
+      },
+    },
     noRemovedFilter: Boolean,
     removedFilter: {
       type: Object,
@@ -60,12 +67,15 @@ export default {
         this.emitError(errorText, error);
       },
       variables() {
+        const filters = {
+          ...!this.noRemovedFilter && this.removedFilter,
+          ...this.filters,
+        };
         return getQueryVariables(this.source, this.mappedFields, this.options,
           {
-            filters: {
-              ...!this.noRemovedFilter && this.removedFilter,
-              ...this.filters,
-            },
+            filters: this.searchFilter
+              ? { ...filters, ...this.searchFilter(this.search, filters) }
+              : filters,
           },
           { sortMapper: this.sortMapper });
       },
@@ -188,6 +198,7 @@ export default {
       on: {
         ...this.$listeners,
         'update:options': (val) => { this.options = val; },
+        'update:search': (val) => { this.$emit('update:search', val); },
       },
     }, this.$children);
   },
