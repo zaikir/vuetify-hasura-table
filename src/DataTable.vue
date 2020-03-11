@@ -2,7 +2,9 @@
 import Vue from 'vue';
 import gql from 'graphql-tag';
 import { VDataTable } from 'vuetify/lib/components';
-import { buildItemsQuery, getQueryVariables, getReferencePath } from './utils';
+import {
+  buildItemsQuery, getQueryVariables, getReferencePath, getFieldValue,
+} from './utils';
 
 export default {
   name: 'VuetifyHasuraTable',
@@ -76,13 +78,17 @@ export default {
       ...params,
     };
 
+    const items = this.items.map((item) => Object.assign(
+      {}, ...this.mappedFields.map((field) => getFieldValue(field, item)),
+    ));
+
     const totalProps = {
       ...this.$props,
       ...this.$attrs,
       ...options.table === VDataTable
         ? { headers: this.fields }
         : { fields: this.fields },
-      items: this.items,
+      items,
       serverItemsLength: this.totalItems,
       options: this.options,
       loading: this.$apollo.loading,
