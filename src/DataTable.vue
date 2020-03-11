@@ -32,6 +32,15 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    filters: {
+      type: Object,
+      default: () => ({}),
+    },
+    noRemovedFilter: Boolean,
+    removedFilter: {
+      type: Object,
+      default: () => ({ isRemoved: { _neq: true } }),
+    },
   },
   apollo: {
     items: {
@@ -51,9 +60,14 @@ export default {
         this.emitError(errorText, error);
       },
       variables() {
-        return getQueryVariables(this.source, this.mappedFields, this.options, {
-          sortMapper: this.sortMapper,
-        });
+        return getQueryVariables(this.source, this.mappedFields, this.options,
+          {
+            filters: {
+              ...!this.noRemovedFilter && this.removedFilter,
+              ...this.filters,
+            },
+          },
+          { sortMapper: this.sortMapper });
       },
       skip() {
         return !this.options;

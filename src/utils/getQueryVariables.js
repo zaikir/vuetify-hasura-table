@@ -2,9 +2,7 @@ const buildReferenceSortValue = (field, value) => {
   const pathes = field.$referencePath.filter((x, i) => i > 0 && x !== 'aggregate');
   return pathes.reduce((acc, item, i) => {
     if (!acc.current) { acc.current = acc.total; }
-
     acc.current[item] = i === pathes.length - 1 ? value : {};
-
     acc.current = acc.current[item];
 
     return acc;
@@ -13,7 +11,7 @@ const buildReferenceSortValue = (field, value) => {
 
 export default (source, fields, {
   page, itemsPerPage, sortBy = [], sortDesc = [],
-}, { sortMapper }) => {
+}, { filters }, { sortMapper }) => {
   const orderBy = Object.fromEntries(sortBy.map((key, i) => {
     const sortValue = sortMapper(key, sortDesc[i]);
 
@@ -25,9 +23,13 @@ export default (source, fields, {
     return [key, sortValue];
   }));
 
+
   return {
     limit: itemsPerPage,
     offset: itemsPerPage * (page - 1),
     orderBy,
+    where: {
+      ...filters,
+    },
   };
 };
