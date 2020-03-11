@@ -2,7 +2,7 @@
 import Vue from 'vue';
 import gql from 'graphql-tag';
 import { VDataTable } from 'vuetify/lib/components';
-import { buildItemsQuery, getQueryVariables } from './utils';
+import { buildItemsQuery, getQueryVariables, getReferencePath } from './utils';
 
 export default {
   name: 'VuetifyHasuraTable',
@@ -27,7 +27,7 @@ export default {
   apollo: {
     items: {
       query() {
-        return gql(buildItemsQuery(this.source, this.fields, this.defaultSelections));
+        return gql(buildItemsQuery(this.source, this.mappedFields, this.defaultSelections));
       },
       update(data) {
         return data[this.source];
@@ -51,6 +51,23 @@ export default {
       totalItems: 0,
       items: [],
     };
+  },
+  computed: {
+    mappedFields() {
+      return this.fields.map((field) => {
+        if (field.value.includes('*')) {
+          const referencePath = getReferencePath(field);
+
+          return {
+            ...field,
+            $referencePath: referencePath,
+            $referenceMapper: (x) => referencePath.reduce((acc, item) => (acc || {})[item], x),
+          };
+        }
+
+        return field;
+      });
+    },
   },
   render(h) {
     const params = Vue.$hasuraTable || {};
@@ -76,9 +93,7 @@ export default {
       scopedSlots: this.$scopedSlots,
       on: {
         ...this.$listeners,
-        'update:options': (val) => {
-          this.options = val;
-        },
+        'update:options': (val) => { this.options = val; },
       },
     }, this.$children);
   },
