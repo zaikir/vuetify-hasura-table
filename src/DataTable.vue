@@ -42,7 +42,7 @@ export default {
         return data[this.source];
       },
       result({ data }) {
-        if (data[data[`${this.source}_aggregate`]]) {
+        if (data[`${this.source}_aggregate`]) {
           this.totalItemsLength = data[`${this.source}_aggregate`].aggregate.count;
         }
       },
@@ -55,11 +55,14 @@ export default {
           sortMapper: this.sortMapper,
         });
       },
+      skip() {
+        return !this.options;
+      },
     },
   },
   data() {
     return {
-      options: { page: 1 },
+      options: null,
       totalItemsLength: 0,
       items: [],
     };
