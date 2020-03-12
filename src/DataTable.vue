@@ -154,7 +154,7 @@ export default {
     const totalFields = this.noDelete ? this.fields : [
       ...this.fields,
       {
-        value: '$delete', sortable: false, width: 1, ...skeletonLoading && { width: undefined, skeleton: { type: 'text', maxWidth: 24, maxHeight: 24 } },
+        value: '$delete', sortable: false, width: 1, ...skeletonLoading && { headerSkeleton: false, skeleton: { type: 'button', maxWidth: 24, maxHeight: 24 } },
       },
     ];
 
