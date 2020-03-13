@@ -47,6 +47,10 @@ export default {
       type: Object,
       default: () => ({ isRemoved: { _neq: true } }),
     },
+    globalProps: Object,
+    globalClasses: Object,
+    skeletonLoading: Boolean,
+    skeletonRowsCount: Number,
   },
   apollo: {
     items: {
