@@ -19,6 +19,7 @@ export default {
       type: String,
       required: true,
     },
+    disabled: Boolean,
     defaultSelections: {
       type: String,
       default: 'id',
@@ -84,7 +85,7 @@ export default {
           { sortMapper: this.sortMapper });
       },
       skip() {
-        return !this.options;
+        return !this.options || this.disabled;
       },
     },
   },
