@@ -185,31 +185,38 @@ export default {
 
     const totalScopedSlots = {
       'item._delete': ({ item }) => {
-        const deleteRowFunc = () => {
-          const mutation = `mutation ($id: ${this.deleteParams.idType || 'uuid!'}) {
-            update_${this.source} (where: {id: {_eq: $id } }, _set: { isRemoved: true }) { affected_rows }
-          }`;
-
-          this.$apollo.mutate({
-            mutation: gql(this.deleteParams.customMutation
-              ? this.deleteParams.customMutation(mutation)
-              : mutation),
-            refetchQueries: () => {
+        const deleteRowFunc = async () => {
+          if (this.deleteParams.mutation) {
+            try {
+              await this.deleteParams.mutation(item[this.deleteParams.idKey || 'id']);
               this.$apollo.queries.items.refetch();
-            },
-            update: (cache) => {
-              if (this.deleteParams.onDeleted) {
-                this.deleteParams.onDeleted({ cache, item });
-              }
-            },
-            error(error) {
-              const errorText = wrapGraphqlError(error);
-              this.emitError(errorText, error);
-            },
-            variables: {
-              id: item[this.deleteParams.idKey || 'id'],
-            },
-          });
+            } catch (err) {
+              this.emitError(err.message, err);
+            }
+          } else {
+            const mutation = `mutation ($id: ${this.deleteParams.idType || 'uuid!'}) {
+              update_${this.source} (where: {id: {_eq: $id } }, _set: { isRemoved: true }) { affected_rows }
+            }`;
+
+            this.$apollo.mutate({
+              mutation: gql(mutation),
+              refetchQueries: () => {
+                this.$apollo.queries.items.refetch();
+              },
+              update: (cache) => {
+                if (this.deleteParams.onDeleted) {
+                  this.deleteParams.onDeleted({ cache, item });
+                }
+              },
+              error(error) {
+                const errorText = wrapGraphqlError(error);
+                this.emitError(errorText, error);
+              },
+              variables: {
+                id: item[this.deleteParams.idKey || 'id'],
+              },
+            });
+          }
         };
 
         return this.$scopedSlots['item._delete']
