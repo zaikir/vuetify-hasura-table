@@ -159,7 +159,7 @@ export default {
     const totalFields = this.noDelete ? this.fields : [
       ...this.fields,
       {
-        value: '$delete', sortable: false, width: 1, ...skeletonLoading && { headerSkeleton: false, skeleton: { type: 'button', maxWidth: 24, maxHeight: 24 } },
+        value: '_delete', sortable: false, width: 1, ...skeletonLoading && { headerSkeleton: false, skeleton: { type: 'button', maxWidth: 24, maxHeight: 24 } },
       },
     ];
 
@@ -184,7 +184,7 @@ export default {
     });
 
     const totalScopedSlots = {
-      'item.$delete': ({ item }) => {
+      'item._delete': ({ item }) => {
         const deleteRowFunc = () => {
           const mutation = `mutation ($id: ${this.deleteParams.idType || 'uuid!'}) {
             update_${this.source} (where: {id: {_eq: $id } }, _set: { isRemoved: true }) { affected_rows }
@@ -212,8 +212,8 @@ export default {
           });
         };
 
-        return this.$scopedSlots['item.$delete']
-          ? this.$scopedSlots['item.$delete']({ item, deleteRowFunc })
+        return this.$scopedSlots['item._delete']
+          ? this.$scopedSlots['item._delete']({ item, deleteRowFunc })
           : renderDeleteRowButton(item, deleteRowFunc);
       },
       ...this.$scopedSlots,
