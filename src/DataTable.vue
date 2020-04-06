@@ -52,6 +52,7 @@ export default {
     globalClasses: Object,
     skeletonLoading: Boolean,
     skeletonRowsCount: Number,
+    footerProps: Object,
   },
   apollo: {
     items: {
