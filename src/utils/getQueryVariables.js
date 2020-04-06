@@ -25,7 +25,7 @@ export default (source, fields, {
 
 
   return {
-    limit: itemsPerPage,
+    ...itemsPerPage > 0 && { limit: itemsPerPage },
     offset: itemsPerPage * (page - 1),
     orderBy,
     where: {
