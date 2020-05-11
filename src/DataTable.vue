@@ -57,7 +57,7 @@ export default {
   apollo: {
     items: {
       query() {
-        return gql(buildItemsQuery(this.source, this.mappedFields, this.defaultSelections));
+        return gql(buildItemsQuery(this.source, this.mappedFields.filter((x) => x.selectable !== false), this.defaultSelections));
       },
       update(data) {
         return data[this.source];
