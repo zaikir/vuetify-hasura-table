@@ -148,7 +148,7 @@ export default {
     };
 
     const items = (this.items || []).map((item) => Object.assign(
-      {},
+      item,
       ...this.defaultSelections.split(' ').map((key) => ({ [key]: item[key] })),
       ...this.mappedFields.map((field) => ({
         [field.value]: getFieldValue(field, item),
