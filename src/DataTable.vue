@@ -53,6 +53,7 @@ export default {
     skeletonLoading: Boolean,
     skeletonRowsCount: Number,
     footerProps: Object,
+    onFetched: Function,
   },
   apollo: {
     items: {
@@ -60,6 +61,10 @@ export default {
         return gql(buildItemsQuery(this.source, this.mappedFields.filter((x) => x.selectable !== false), this.defaultSelections));
       },
       update(data) {
+        if (this.onFetched) {
+          this.onFetched(data[this.source]);
+        }
+
         return data[this.source];
       },
       result({ data }) {
