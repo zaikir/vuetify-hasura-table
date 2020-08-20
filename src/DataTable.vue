@@ -28,6 +28,10 @@ export default {
       type: Function,
       default: (key, value) => (value ? 'desc' : 'asc'),
     },
+    preSort: {
+      type: Function,
+      default: (x) => x,
+    },
     noDelete: Boolean,
     deleteParams: {
       type: Object,
@@ -62,7 +66,7 @@ export default {
       },
       update(data) {
         if (this.onFetched) {
-          this.onFetched(data[this.source]);
+          return this.onFetched(data[this.source]);
         }
 
         return data[this.source];
@@ -88,7 +92,7 @@ export default {
               ? { ...filters, ...this.searchFilter(this.searchValue, filters) }
               : filters,
           },
-          { sortMapper: this.sortMapper });
+          { sortMapper: this.sortMapper, preSort: this.preSort });
       },
       skip() {
         return !this.options || this.disabled;

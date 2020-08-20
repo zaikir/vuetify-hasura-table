@@ -11,7 +11,7 @@ const buildReferenceSortValue = (field, value) => {
 
 export default (source, fields, {
   page, itemsPerPage, sortBy = [], sortDesc = [],
-}, { filters }, { sortMapper }) => {
+}, { filters }, { sortMapper, preSort = (x) => x }) => {
   const orderBy = Object.fromEntries(sortBy.map((key, i) => {
     const sortValue = sortMapper(key, sortDesc[i]);
 
@@ -27,7 +27,7 @@ export default (source, fields, {
   return {
     ...itemsPerPage > 0 && { limit: itemsPerPage },
     offset: itemsPerPage * (page - 1),
-    orderBy,
+    orderBy: preSort(orderBy),
     where: {
       ...filters,
     },
