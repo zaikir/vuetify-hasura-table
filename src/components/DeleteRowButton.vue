@@ -1,7 +1,7 @@
 <template>
   <v-hover left>
     <template #default="{hover}">
-      <v-btn icon :color="hover ? 'error': ''" @click="removeRow">
+      <v-btn icon :color="hover ? 'error': ''" @click.prevent.stop="removeRow">
         <v-icon>{{ hover ? 'mdi-delete-forever' : 'delete' }}</v-icon>
         <confirmation-dialog
           v-model="isDeleteDialogOpened"
