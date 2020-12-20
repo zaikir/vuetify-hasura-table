@@ -126,6 +126,16 @@ export default {
     },
   },
   methods: {
+    refresh() {
+      this.$apollo.queries.items.refetch();
+    },
+    updateRow(row) {
+      const index = this.items.findIndex((x) => x.id === row.id);
+      this.$set(this.items, index, {
+        ...this.items[index],
+        ...row,
+      });
+    },
     emitError(errorText, error) {
       if ((Vue.$hasuraTable || {}).errorHandler) {
         Vue.$hasuraTable.errorHandler(errorText, error);
