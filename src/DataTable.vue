@@ -129,6 +129,9 @@ export default {
     refresh() {
       this.$apollo.queries.items.refetch();
     },
+    addRow(row) {
+      this.$set(this, 'items', [row, ...this.items]);
+    },
     updateRow(row) {
       const index = this.items.findIndex((x) => x.id === row.id);
       this.$set(this.items, index, {
