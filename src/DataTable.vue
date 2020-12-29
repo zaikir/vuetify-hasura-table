@@ -104,6 +104,7 @@ export default {
       options: null,
       totalItemsLength: 0,
       items: [],
+      actualItems: [],
       searchValue: null,
       initialLoading: true,
     };
@@ -130,12 +131,13 @@ export default {
       this.$apollo.queries.items.refetch();
     },
     addRow(row) {
-      this.$set(this, 'items', [row, ...this.items]);
+      this.$set(this, 'actualItems', [row, ...this.actualItems]);
+      this.totalItemsLength += 1;
     },
     updateRow(row) {
-      const index = this.items.findIndex((x) => x.id === row.id);
-      this.$set(this.items, index, {
-        ...this.items[index],
+      const index = this.actualItems.findIndex((x) => x.id === row.id);
+      this.$set(this.actualItems, index, {
+        ...this.actualItems[index],
         ...row,
       });
     },
@@ -161,6 +163,12 @@ export default {
       },
       immediate: true,
     },
+    items: {
+      handler() {
+        this.actualItems = [...this.items];
+      },
+      immediate: true,
+    },
   },
   render(h) {
     const params = Vue.$hasuraTable || {};
@@ -169,7 +177,7 @@ export default {
       ...params,
     };
 
-    const items = (this.items || []).map((item) => Object.assign(
+    const items = (this.actualItems || []).map((item) => Object.assign(
       item,
       ...this.defaultSelections.split(' ').map((key) => ({ [key]: item[key] })),
       ...this.mappedFields.map((field) => ({
