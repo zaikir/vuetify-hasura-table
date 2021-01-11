@@ -133,8 +133,6 @@ export default {
     addRow(row) {
       this.$set(this, 'actualItems', [row, ...this.actualItems]);
       this.totalItemsLength += 1;
-
-      console.log('added', row);
     },
     updateRow(row) {
       const index = this.actualItems.findIndex((x) => x.id === row.id);
@@ -196,7 +194,6 @@ export default {
       },
     ];
 
-    console.log(items);
     const totalProps = {
       ...this.$props,
       ...this.$attrs,
