@@ -141,6 +141,10 @@ export default {
         ...row,
       });
     },
+    removeRow(row) {
+      this.$set(this, 'actualItems', this.actualItems.filter((x) => x.id !== row.id));
+      this.totalItemsLength -= 1;
+    },
     emitError(errorText, error) {
       if ((Vue.$hasuraTable || {}).errorHandler) {
         Vue.$hasuraTable.errorHandler(errorText, error);
