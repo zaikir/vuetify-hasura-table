@@ -254,9 +254,11 @@ export default {
           }
         };
 
-        return this.$scopedSlots['item._delete']
+        const idDeleteAllowed = this.deleteParams.isRowEnabled ? this.deleteParams.isRowEnabled(item) : true;
+
+        return idDeleteAllowed ? (this.$scopedSlots['item._delete']
           ? this.$scopedSlots['item._delete']({ item, deleteRowFunc })
-          : renderDeleteRowButton(item, deleteRowFunc);
+          : renderDeleteRowButton(item, deleteRowFunc)) : null;
       },
       ...this.$scopedSlots,
     };
