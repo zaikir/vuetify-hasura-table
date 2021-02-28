@@ -52,6 +52,10 @@ export default {
       type: Object,
       default: () => ({ isRemoved: { _neq: true } }),
     },
+    context: {
+      type: Object,
+      default: () => {},
+    },
     globalProps: Object,
     globalClasses: Object,
     skeletonLoading: Boolean,
@@ -80,6 +84,9 @@ export default {
       error(error) {
         const errorText = wrapGraphqlError(error);
         this.emitError(errorText, error);
+      },
+      context() {
+        return this.context;
       },
       variables() {
         const filters = {
