@@ -26,7 +26,7 @@ export default {
     },
     sortMapper: {
       type: Function,
-      default: (key, value) => (value ? 'desc' : 'asc'),
+      default: (key, value) => (value ? 'desc_nulls_last' : 'asc_nulls_last'),
     },
     preSort: {
       type: Function,
