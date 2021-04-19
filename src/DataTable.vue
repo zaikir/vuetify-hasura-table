@@ -56,6 +56,10 @@ export default {
       type: Object,
       default: () => {},
     },
+    debounce: {
+      type: Number,
+      default: 200,
+    },
     globalProps: Object,
     globalClasses: Object,
     skeletonLoading: Boolean,
@@ -103,6 +107,9 @@ export default {
       },
       skip() {
         return !this.options || this.disabled;
+      },
+      debounce() {
+        return this.debounce;
       },
     },
   },
