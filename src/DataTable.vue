@@ -226,7 +226,7 @@ export default {
     };
 
     const renderDeleteRowButton = (item, deleteRowFunc, idDeleteAllowed) => h(DeleteRowButton, {
-      props: { icon: true, disabled: idDeleteAllowed },
+      props: { icon: true, disabled: !idDeleteAllowed },
       on: {
         delete: deleteRowFunc,
       },
