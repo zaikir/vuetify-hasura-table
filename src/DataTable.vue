@@ -225,8 +225,8 @@ export default {
       skeletonLoading,
     };
 
-    const renderDeleteRowButton = (item, deleteRowFunc) => h(DeleteRowButton, {
-      props: { icon: true },
+    const renderDeleteRowButton = (item, deleteRowFunc, idDeleteAllowed) => h(DeleteRowButton, {
+      props: { icon: true, disabled: idDeleteAllowed },
       on: {
         delete: deleteRowFunc,
       },
@@ -270,9 +270,9 @@ export default {
 
         const idDeleteAllowed = this.deleteParams.isRowEnabled ? this.deleteParams.isRowEnabled(item) : true;
 
-        return idDeleteAllowed ? (this.$scopedSlots['item._delete']
+        return (this.$scopedSlots['item._delete']
           ? this.$scopedSlots['item._delete']({ item, deleteRowFunc })
-          : renderDeleteRowButton(item, deleteRowFunc)) : null;
+          : renderDeleteRowButton(item, deleteRowFunc, idDeleteAllowed));
       },
       ...this.$scopedSlots,
     };
