@@ -1,7 +1,7 @@
 <template>
   <v-hover left>
     <template #default="{hover}">
-      <v-btn icon :color="hover ? 'error': ''" @click.prevent.stop="removeRow">
+      <v-btn icon :color="hover ? 'error': ''" @click.prevent.stop="removeRow" :disabled="disabled">
         <v-icon>{{ hover ? 'mdi-delete-forever' : 'delete' }}</v-icon>
         <confirmation-dialog
           v-model="isDeleteDialogOpened"
@@ -16,6 +16,12 @@
 import ConfirmationDialog from './ConfirmationDialog.vue';
 
 export default {
+  props: {
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
+  },
   components: {
     ConfirmationDialog,
   },
