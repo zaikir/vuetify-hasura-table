@@ -184,6 +184,7 @@ export default {
     items: {
       handler() {
         this.actualItems = [...this.items];
+        this.$emit('items-updated', this.actualItems)
       },
       immediate: true,
     },
