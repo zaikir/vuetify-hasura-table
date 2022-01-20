@@ -184,10 +184,16 @@ export default {
     items: {
       handler() {
         this.actualItems = [...this.items];
-        this.$emit('items-updated', this.actualItems)
       },
       immediate: true,
     },
+    actualItems: {
+      handler(val) {
+        this.$emit('items-updated', val);
+      },
+      immediate: true,
+    },
+
   },
   render(h) {
     const params = Vue.$hasuraTable || {};
